@@ -32,7 +32,9 @@ static PyObject *floor_divide(PyObject *self, PyObject *args) {
     for (i=0; i<n; i++) {
         pItem = PyList_GetItem(pList, i);
         if(!PyLong_Check(pItem)) {
-            PyErr_SetString(PyExc_TypeError, "list items must be integers.");
+            char *error_message = malloc((log(n)+50)*sizeof(char));
+            sprintf(error_message, "List item at index %ld is not an integer!", i);
+            PyErr_SetString(PyExc_TypeError, error_message);
             return NULL;
         }
     }
