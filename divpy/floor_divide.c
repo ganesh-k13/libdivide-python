@@ -1,29 +1,30 @@
 #include <Python.h>
 
-static PyObject *read_list(PyObject *self, PyObject *args);
+static PyObject *floor_divide(PyObject *self, PyObject *args);
 
 static PyMethodDef ListsMethods[] = {
-    {"read_list", read_list, METH_VARARGS, "Python interface for read_list function"},
+    {"floor_divide", floor_divide, METH_VARARGS, "Python interface for floor_divide function"},
     {NULL, NULL, 0, NULL}
 };
 
 
-static struct PyModuleDef read_listmodule = {
+static struct PyModuleDef floor_dividemodule = {
     PyModuleDef_HEAD_INIT,
-    "read_list",
-    "Python interface for the read_list function",
+    "floor_divide",
+    "Python interface for the floor_divide function",
     -1,
     ListsMethods
 };
 
-static PyObject *read_list(PyObject *self, PyObject *args) {
+static PyObject *floor_divide(PyObject *self, PyObject *args) {
     PyObject *pList;
     PyObject *pItem;
     Py_ssize_t n;
-    int i;
+    Py_ssize_t i;
+    int divisor;
 
-    if (!PyArg_ParseTuple(args, "O!", &PyList_Type, &pList)) {
-        PyErr_SetString(PyExc_TypeError, "parameter must be a list.");
+    if (!PyArg_ParseTuple(args, "O!i", &PyList_Type, &pList, &divisor)) {
+        PyErr_SetString(PyExc_TypeError, "parameter must be a list and an integer.");
         return NULL;
     }
 
@@ -39,6 +40,6 @@ static PyObject *read_list(PyObject *self, PyObject *args) {
     return Py_BuildValue("");
 }
 
-PyMODINIT_FUNC PyInit_read_list(void) {
-        return PyModule_Create(&read_listmodule);
+PyMODINIT_FUNC PyInit_divpy(void) {
+        return PyModule_Create(&floor_dividemodule);
 }

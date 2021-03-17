@@ -6,7 +6,7 @@ def main():
           description="Python interface for the read_list function",
           author="Ganesh Kathiresan",
           author_email="ganesh3597@gmail.com",
-          ext_modules=[Extension("read_list", ["divpy/floor_divide.c"])])
+          ext_modules=[Extension("divpy", ["divpy/floor_divide.c"])])
 
 if __name__ == "__main__":
     main()
