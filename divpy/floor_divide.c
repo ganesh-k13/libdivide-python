@@ -18,7 +18,8 @@ static struct PyModuleDef floor_dividemodule = {
 
 static PyObject *floor_divide(PyObject *self, PyObject *args) {
     PyObject *pList;
-    PyObject *pItem;
+    PyObject *pItem, *pQuotient;
+    long cItem, cQuotient;
     Py_ssize_t n;
     Py_ssize_t i;
     int divisor;
@@ -37,6 +38,10 @@ static PyObject *floor_divide(PyObject *self, PyObject *args) {
             PyErr_SetString(PyExc_TypeError, error_message);
             return NULL;
         }
+        cItem = PyLong_AsLong(pItem);
+        cQuotient = cItem / divisor;
+        pQuotient = PyLong_FromLong(cQuotient);
+        PyList_SetItem(pList, i, pQuotient);
     }
 
     return Py_BuildValue("");
