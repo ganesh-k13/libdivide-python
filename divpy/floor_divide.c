@@ -17,8 +17,9 @@ static struct PyModuleDef floor_dividemodule = {
 };
 
 static PyObject *floor_divide(PyObject *self, PyObject *args) {
-    PyObject *pList;
-    PyObject *pItem;
+    PyObject *pList, *pListNew;
+    PyObject *pItem, *pQuotient;
+    long cItem, cQuotient;
     Py_ssize_t n;
     Py_ssize_t i;
     int divisor;
@@ -29,15 +30,22 @@ static PyObject *floor_divide(PyObject *self, PyObject *args) {
     }
 
     n = PyList_Size(pList);
+    pListNew = PyList_New(n);
     for (i=0; i<n; i++) {
         pItem = PyList_GetItem(pList, i);
         if(!PyLong_Check(pItem)) {
-            PyErr_SetString(PyExc_TypeError, "list items must be integers.");
+            char *error_message = malloc((log(n)+50)*sizeof(char));
+            sprintf(error_message, "List item at index %ld is not an integer!", i);
+            PyErr_SetString(PyExc_TypeError, error_message);
             return NULL;
         }
+        cItem = PyLong_AsLong(pItem);
+        cQuotient = cItem / divisor;
+        pQuotient = PyLong_FromLong(cQuotient);
+        PyList_SetItem(pListNew, i, pQuotient);
     }
 
-    return Py_BuildValue("");
+    return pListNew;
 }
 
 PyMODINIT_FUNC PyInit_divpy(void) {
