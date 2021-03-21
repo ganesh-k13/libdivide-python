@@ -1,0 +1,4 @@
+Name: libdivide
+Files: divpy/libdivide/*
+License: Zlib
+  For license text, see divpy/libdivide/LICENSE.txt
