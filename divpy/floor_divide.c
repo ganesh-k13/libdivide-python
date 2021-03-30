@@ -1,4 +1,5 @@
 #include <Python.h>
+#include "libdivide/libdivide.h"
 
 static PyObject *floor_divide(PyObject *self, PyObject *args);
 
@@ -7,6 +8,15 @@ static PyMethodDef ListsMethods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+static inline PyObject *libdivide_divide(PyObject *pItem, const struct libdivide_u64_t *divisor) {
+    long cItem, cQuotient;
+    PyObject *pQuotient;
+
+    cItem = PyLong_AsLong(pItem);
+    cQuotient = libdivide_u64_do(cItem, divisor);
+    pQuotient = PyLong_FromLong(cQuotient);
+    return pQuotient;
+}
 
 static struct PyModuleDef floor_dividemodule = {
     PyModuleDef_HEAD_INIT,
@@ -19,15 +29,17 @@ static struct PyModuleDef floor_dividemodule = {
 static PyObject *floor_divide(PyObject *self, PyObject *args) {
     PyObject *pList, *pListNew;
     PyObject *pItem, *pQuotient;
-    long cItem, cQuotient;
     Py_ssize_t n;
     Py_ssize_t i;
-    int divisor;
+    long divisor;
+    struct libdivide_u64_t libdivisor;
 
     if (!PyArg_ParseTuple(args, "O!i", &PyList_Type, &pList, &divisor)) {
         PyErr_SetString(PyExc_TypeError, "parameter must be a list and an integer.");
         return NULL;
     }
+
+    libdivisor = libdivide_u64_gen(divisor);
 
     n = PyList_Size(pList);
     pListNew = PyList_New(n);
@@ -39,9 +51,7 @@ static PyObject *floor_divide(PyObject *self, PyObject *args) {
             PyErr_SetString(PyExc_TypeError, error_message);
             return NULL;
         }
-        cItem = PyLong_AsLong(pItem);
-        cQuotient = cItem / divisor;
-        pQuotient = PyLong_FromLong(cQuotient);
+        pQuotient = libdivide_divide(pItem, &libdivisor);
         PyList_SetItem(pListNew, i, pQuotient);
     }
 
